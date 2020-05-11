@@ -1,2 +1,12 @@
-# chat-app
-Chat application made with react and firebase
+# Chat application
+
+# Technologies used: 
+- React-Native
+- Firebase 
+
+# External resources used: 
+- react navigation 
+- gesture-handler
+- firebase
+- react-native-elements
+- lodash
