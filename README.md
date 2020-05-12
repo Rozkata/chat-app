@@ -10,3 +10,5 @@
 - firebase
 - react-native-elements
 - lodash
+- expo-image-picker
+- expo-permissions
