@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SafeAreaView, View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity, requireNativeComponent, Alert } from 'react-native';
+import { SafeAreaView, View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Button, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import User from '../constants/User';
 import firebase from 'firebase';
@@ -109,7 +109,7 @@ export default function ProfileScreen(props) {
                 {User.name}
             </Text>
 
-            <TouchableOpacity onPress={() => _logOut()}>
+            <TouchableOpacity style={styles.logoutWrapper} onPress={() => _logOut()}>
                 <Text style={styles.logout}>Logout</Text>
             </TouchableOpacity>
         </SafeAreaView>
@@ -124,14 +124,21 @@ const styles = StyleSheet.create({
         backgroundColor: '#ccffff'
     },
     logout: {
-        marginTop: 20,
         fontWeight: "bold",
         fontSize: 20,
-        color: "#d2143a",
+        color: "black",
     }, 
     username: {
         fontWeight: "bold",
         fontSize: 20,
         color: "#00ace6",
+    },
+    logoutWrapper: {
+        marginTop: '50%',
+        borderWidth: 1,
+        borderRadius: 12,
+        width: '50%',
+        alignItems: 'center',
+        backgroundColor: '#00cccc'
     }
 });

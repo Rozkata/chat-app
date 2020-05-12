@@ -14,7 +14,7 @@ export default function LoginScreen (props) {
             var rootRef = firebase.database().ref('users/' + name);
             rootRef.once("value")
             .then(function(snapshot) {
-            var key = snapshot.key;
+            var key = snapshot.exists();
             if (!key) {
                 firebase.database().ref('users/' + name).set({name: name});
             }
