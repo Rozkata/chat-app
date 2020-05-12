@@ -1,53 +1,51 @@
-import React from "react";
+import * as React from "react";
 import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { SearchBar } from 'react-native-elements';
 import _ from 'lodash';
 import firebase from "firebase";
+import User from "../constants/User";
 
-export default class HomeScreen extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-    static navigationOptions = {
-        title: 'Chat'
-    }
+export default function HomeScreen(props) {
+    const [users, setUsers] = React.useState([]);
+    const [query, setQuery] = React.useState([]);
+    const [fullData, setFullData] = React.useState([]); 
 
-    state = {
-        users: [],
-        query: '',
-        fullData: []
-    }
-
-    componentDidMount() {
+    React.useEffect(() => {
         const dbRef = firebase.database().ref('users');
         dbRef.on('child_added', (val) => {
             const person = val.val();
-            this.setState((prevState) => {
-                return {
-                    users: [...prevState.users, person],
-                    fullData: [...prevState.users, person]
-                }
-            })
+            User.imageUrl = person.image && person.name === props.navigation.state.params.name ? person.image : null;
+            setUsers((prevState) =>  {
+                    return [...prevState, person];
+            });
+            setFullData((prevState) => {
+                return [...prevState, person];
+            });
         })
-    }
+    }, []);
+    
 
-    renderRow = (item) => {
+    function renderRow(item) {
         return(
             <TouchableOpacity key={item.name} style={styles.users}>
-                <Text style={{fontSize: 20}} onPress={() => this.goToChat(item.name)}>{item.name}</Text>
+                <Image 
+                source={item.image? {uri: item.image} : require('../assets/user.png')}
+                style={{width:32, height: 32, resizeMode: 'cover', borderRadius: 32, marginRight: 5}}
+                />
+                <Text style={{fontSize: 20}} onPress={() => goToChat(item.name)}>{item.name}</Text>
             </TouchableOpacity>
         )
     }
 
-    goToChat(name) {
-        this.props.navigation.navigate("Chat", {name: name, userName: this.props.navigation.state.params.name});
+    function goToChat(name) {
+        props.navigation.navigate("Chat", {name: name, userName: props.navigation.state.params.name});
     }
 
-    handleGoToProfile() {
-        this.props.navigation.navigate("Profile", {userName: this.props.navigation.state.params.name});
+    function handleGoToProfile() {
+        props.navigation.navigate("Profile", {userName: props.navigation.state.params.name});
     }
     
-    contains = (name, query) => {
+    function contains(name, query) {
         if (name.name.includes(query)) {
             return true;
         }
@@ -55,31 +53,30 @@ export default class HomeScreen extends React.Component {
         return false;
     }
 
-    handleSearch = (text) => {
+    function handleSearch(text) {
         const formatQuery = text;
-        const data = _.filter(this.state.fullData, user => {
-            return this.contains(user, formatQuery);
+        const data = _.filter(fullData, user => {
+            return contains(user, formatQuery);
         });
-        this.setState({ query: formatQuery, users: data });
+        setQuery(formatQuery);
+        setUsers(data);
     }
 
-    render() {
-        const users = this.state.users.map((user) => {
-            return this.renderRow(user);
+        const profileUsers = users.map((user) => {
+            return renderRow(user);
         });
         return(
             <View style={{flexDirection: 'column', height: '100%', backgroundColor: "#ccffff"}}>                        
-             <SearchBar placeholder="Search here..." lightTheme round onChangeText={this.handleSearch} value={this.state.query} containerStyle={styles.searchcontainer}/>
-            <TouchableOpacity onPress={() => this.handleGoToProfile()}style={{flexDirection: 'row', alignItems: 'center'}}>
+             <SearchBar placeholder="Search here..." lightTheme round onChangeText={handleSearch} value={query} containerStyle={styles.searchcontainer}/>
+            <TouchableOpacity onPress={() => handleGoToProfile()}style={{flexDirection: 'row', alignItems: 'center', paddingBottom: 5}}>
             <Image style={{height: 50, width: 50, right: 0, top: 0}} source={require("../assets/profile.png")} />
             <Text style={{fontSize: 20, fontWeight: 'bold', color: "#00ace6"}}> Go to your profile </Text>
             </TouchableOpacity>
             <SafeAreaView style={{flex: 1}}>
-                {users}
+                {profileUsers}
             </SafeAreaView>
             </View>
         );
-    }
 }
 
 const styles = StyleSheet.create({
@@ -88,7 +85,8 @@ const styles = StyleSheet.create({
         borderColor: "#00ccff", 
         borderWidth: 1, 
         borderRadius: 10, 
-        marginBottom: 10
+        marginBottom: 10,
+        flexDirection: 'row',
     },
     searchcontainer: {
         backgroundColor: '#ccffff',

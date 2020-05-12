@@ -1,5 +1,6 @@
 const User = {
-    name: null
+    name: null,
+    imageUrl: null
 }
 
 export default User;

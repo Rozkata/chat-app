@@ -11,7 +11,14 @@ export default function LoginScreen (props) {
         if (name.length < 3) {
             Alert.alert('Error', 'Wrong name');
         } else {
-            firebase.database().ref('users/' + name).set({name: name});
+            var rootRef = firebase.database().ref('users/' + name);
+            rootRef.once("value")
+            .then(function(snapshot) {
+            var key = snapshot.key;
+            if (!key) {
+                firebase.database().ref('users/' + name).set({name: name});
+            }
+            });
             props.navigation.navigate("Home", {name: name});
         }
     }
