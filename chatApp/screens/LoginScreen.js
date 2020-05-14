@@ -41,7 +41,7 @@ export default function LoginScreen (props) {
             firebase.initializeApp(firebaseConfig);
         }
     });
-    const keyboardVerticalOffset = Platform.OS === 'ios' ? 30 : 0
+    const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0
 
     return (
         <View style={styles.container}>
@@ -65,7 +65,7 @@ export default function LoginScreen (props) {
                 />
             </View>
             </KeyboardAvoidingView>
-            <View style={{alignItems: "flex-end", marginTop: 50, marginHorizontal: 32}}>
+            <View style={styles.continueContainer}>
                     <TouchableOpacity  onPress={handleContinue}>
                         <Text style={styles.continueButton}>Continue</Text>
                     </TouchableOpacity>
@@ -109,5 +109,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 20,
         color: "#00ace6",
+    },
+    continueContainer: {
+        alignItems: "flex-end", 
+        marginTop: 50, 
+        marginHorizontal: 32
     }
 });

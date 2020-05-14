@@ -52,10 +52,10 @@ export default function ChatScreen(props) {
                 borderRadius: 10,
                 marginBottom: 10 
             }}>
-                <Text style={{color: '#fff', padding: 7, fontSize: 16}}>
+                <Text style={styles.messagesStyle}>
                     {item.text}
                 </Text>
-                <Text style={{color: '#eee', padding:3, fontSize: 12}}>
+                <Text style={styles.timeStyle}>
                     {convertTime(item.timeStamp)}
                 </Text>
 
@@ -85,13 +85,13 @@ export default function ChatScreen(props) {
             <SafeAreaView>
                 <Text style={styles.username}>{toUser}</Text>
                 <FlatList 
-                style={{padding: 10, height: height * 0.85}}
+                style={styles.flatListStyles}
                 data={messages}
                 renderItem={renderMessages}
                 keyExtractor={(item, index) => index.toString()}
                 />
                 <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={keyboardVerticalOffset}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={styles.sendMessageContainer}>
 
                     <TextInput 
                     style={styles.input}
@@ -99,7 +99,7 @@ export default function ChatScreen(props) {
                     onChangeText={name => setTextMessage(name)}
                     value={textMessage}
                     />
-                    <TouchableOpacity onPress={() => handleSend()} style={{paddingBottom:10, marginLeft:5}}>
+                    <TouchableOpacity onPress={() => handleSend()} style={styles.sendButton}>
                         <Text style={styles.btnText}>Send</Text>
                     </TouchableOpacity>
                 </View>
@@ -137,5 +137,27 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom:20,
         left: 150,
+    },
+    messagesStyle: {
+        color: '#fff', 
+        padding: 7, 
+        fontSize: 16
+    },
+    timeStyle: {
+        color: '#eee', 
+        padding:3, 
+        fontSize: 12
+    },
+    flatListStyles: {
+        padding: 10, 
+        height: height * 0.85
+    },
+    sendMessageContainer: {
+        flexDirection: 'row', 
+        alignItems: 'center'
+    },
+    sendButton: {
+        paddingBottom:10, 
+        marginLeft:5
     }
 });

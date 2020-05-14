@@ -81,11 +81,11 @@ export default function HomeScreen(props) {
             return renderRow(user);
         });
         return(
-            <View style={{flexDirection: 'column', height: '100%', backgroundColor: "#ccffff"}}>                        
+            <View style={styles.container}>                        
              <SearchBar placeholder="Search here..." lightTheme round onChangeText={handleSearch} value={query} containerStyle={styles.searchcontainer}/>
-            <TouchableOpacity onPress={() => handleGoToProfile()}style={{flexDirection: 'row', alignItems: 'center', paddingBottom: 5}}>
-            <Image style={{height: 50, width: 50, right: 0, top: 0}} source={require("../assets/profile.png")} />
-            <Text style={{fontSize: 20, fontWeight: 'bold', color: "#00ace6"}}> Go to your profile </Text>
+            <TouchableOpacity onPress={() => handleGoToProfile()}style={styles.profileButton}>
+            <Image style={styles.profileImage} source={require("../assets/profile.png")} />
+            <Text style={styles.goToProfileText}> Go to your profile </Text>
             </TouchableOpacity>
             <SafeAreaView style={{flex: 1}}>
                 {profileUsers}
@@ -95,6 +95,11 @@ export default function HomeScreen(props) {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'column', 
+        height: '100%', 
+        backgroundColor: "#ccffff"
+    },
     users: {
         padding: 10, 
         borderColor: "#00ccff", 
@@ -108,5 +113,21 @@ const styles = StyleSheet.create({
         borderBottomColor: 'transparent',
         borderTopColor: 'transparent',
         paddingTop: 20
+    },
+    profileButton: {
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        paddingBottom: 5
+    },
+    profileImage: {
+        height: 50, 
+        width: 50, 
+        right: 0, 
+        top: 0
+    },
+    goToProfileText: {
+        fontSize: 20, 
+        fontWeight: 'bold', 
+        color: "#00ace6"
     }
 });

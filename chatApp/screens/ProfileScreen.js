@@ -108,7 +108,7 @@ export default function ProfileScreen(props) {
                     {
                         upload ? <ActivityIndicator size="large" /> :
                         <Image 
-                        style={{borderRadius: 100, width: 100, height: 100, resizeMode: 'cover'}}
+                        style={styles.profileImage}
                         source={imageSource}
                         />
                     }
@@ -186,5 +186,11 @@ const styles = StyleSheet.create({
         width: 150,
         alignItems: 'center',
         backgroundColor: '#00cccc'
+    },
+    profileImage: {
+        borderRadius: 100, 
+        width: 100, 
+        height: 100, 
+        resizeMode: 'cover'
     }
 });
