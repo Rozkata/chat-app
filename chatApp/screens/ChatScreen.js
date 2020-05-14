@@ -76,9 +76,8 @@ export default function ChatScreen(props) {
             result = d.getDay() + ' ' + d.getMonth() + ' ' + result;
         }
         return result;
-    }
+    }    
 
-    let {height, width} = Dimensions.get('window');
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0
 
         return(
@@ -109,6 +108,7 @@ export default function ChatScreen(props) {
 
 }
 
+let {height, width} = Dimensions.get('window');
 const styles = StyleSheet.create({
     container: {
         flex: 1,
