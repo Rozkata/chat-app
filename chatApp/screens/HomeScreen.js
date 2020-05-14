@@ -7,14 +7,23 @@ import User from "../constants/User";
 
 export default function HomeScreen(props) {
     const [users, setUsers] = React.useState([]);
-    const [query, setQuery] = React.useState([]);
-    const [fullData, setFullData] = React.useState([]); 
+    const [query, setQuery] = React.useState("");
+    const [fullData, setFullData] = React.useState([]);
+    let hasImage = false;
+    
+    const currentTelephoneNumber = props.navigation.state.params.userPhoneNumber;
 
     React.useEffect(() => {
         const dbRef = firebase.database().ref('users');
         dbRef.on('child_added', (val) => {
             const person = val.val();
-            User.imageUrl = person.image && person.name === props.navigation.state.params.name ? person.image : null;
+            if (person.image && person.name === props.navigation.state.params.name) {
+                User.imageUrl = person.image;
+                hasImage = true;
+            } 
+            if (!hasImage) {
+                User.imageUrl = null;
+            }
             setUsers((prevState) =>  {
                     return [...prevState, person];
             });
@@ -38,11 +47,17 @@ export default function HomeScreen(props) {
     }
 
     function goToChat(name) {
-        props.navigation.navigate("Chat", {name: name, userName: props.navigation.state.params.name});
+        let receiverPhone;
+        firebase.database().ref('users/').orderByChild('name').equalTo(name).on("value", snapshot => {
+            snapshot.forEach((function(child) { 
+                receiverPhone = child.key;
+            })); 
+        })
+        props.navigation.navigate("Chat", {senderPhoneNumber: currentTelephoneNumber, toUser: name, receiverPhoneNumber: receiverPhone});
     }
 
     function handleGoToProfile() {
-        props.navigation.navigate("Profile", {userName: props.navigation.state.params.name});
+        props.navigation.navigate("Profile", {userName: props.navigation.state.params.name, phoneNumber: currentTelephoneNumber});
     }
     
     function contains(name, query) {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SafeAreaView, View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Button, Alert } from 'react-native';
+import { SafeAreaView, View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Alert, TextInput } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import User from '../constants/User';
 import firebase from 'firebase';
@@ -9,8 +9,10 @@ import Constants from 'expo-constants';
 export default function ProfileScreen(props) {
     const [imageSource, setImageSource] = React.useState(User.imageUrl ? {uri: User.imageUrl} : require('../assets/user.png'));
     const [upload, setUpload] = React.useState(false);
-    User.name = props.navigation.state.params.userName;
+    const [userName, setUserName] = React.useState("");
 
+    User.name = props.navigation.state.params.userName;
+    User.phoneNumber = props.navigation.state.params.phoneNumber;
 
 
     React.useEffect(() => {
@@ -34,7 +36,7 @@ export default function ProfileScreen(props) {
 
     function updateUserImage(imageUrl) {
         User.image = imageUrl;
-        firebase.database().ref('users').child(User.name).set({name: User.name, image: imageUrl});
+        firebase.database().ref('users').child(User.phoneNumber).set({name: User.name, image: imageUrl});
         Alert.alert('Success', 'Image changed succesfully.');
         setImageSource({uri: imageUrl}); 
         setUpload(false);
@@ -53,9 +55,9 @@ export default function ProfileScreen(props) {
                 setImageSource({uri: result.uri});
                 uploadFile();
             }
-            console.log(result);
           } catch (E) {
-            console.log(E);
+              console.log(E);
+              Alert.alert('Error', 'An unexpected error has occured');
           }
     }
 
@@ -70,7 +72,7 @@ export default function ProfileScreen(props) {
             setImageSource(require('../assets/user.png'));
             Alert.alert('Error', 'Error when uploading image');
         })
-}
+    }
     
     function uriToBlob(uri) {
         return new Promise((resolve, reject) => {
@@ -89,6 +91,16 @@ export default function ProfileScreen(props) {
         })
     }
 
+    function handleChangeName() {
+        if (userName.length === 0) {
+            Alert.alert('Error', 'You cant change your name with a blank one !')
+        } else {
+            firebase.database().ref('users/' + User.phoneNumber).update({name: userName});
+            User.name = userName;
+            Alert.alert('Success', 'Change will be displayed on next login, make sure to use your new username.');
+        }
+    }
+
     return(
         <SafeAreaView style={styles.container}>
             <View style={{alignItems: 'center'}}>
@@ -103,12 +115,28 @@ export default function ProfileScreen(props) {
                 </TouchableOpacity>
             </View>
             <Text style={styles.username}>
+                Phone Number
+            </Text>
+            <Text style={{fontSize: 20}}>
+                {User.phoneNumber}
+            </Text>
+
+            <Text style={styles.username}>
                 Username
             </Text>
             <Text style={{fontSize: 20}}>
                 {User.name}
             </Text>
-
+            <TextInput 
+            style={styles.input}
+            placeholder="New username"
+            placeholderTextColor="#00ace6" 
+            onChangeText={name => setUserName(name)}
+            value={userName}
+            />
+            <TouchableOpacity style={styles.changeName} onPress={() => handleChangeName()}>
+                <Text>Change name</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.logoutWrapper} onPress={() => _logOut()}>
                 <Text style={styles.logout}>Logout</Text>
             </TouchableOpacity>
@@ -138,6 +166,24 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 12,
         width: '50%',
+        alignItems: 'center',
+        backgroundColor: '#00cccc'
+    },
+    input: {
+        marginTop: 20,
+        height: 50,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderRadius: 30,
+        paddingHorizontal: 25,
+        color: "black",
+        fontWeight: "bold",
+    },
+    changeName: {
+        marginTop: 20,
+        height: 30,
+        borderWidth: 1,
+        borderRadius: 12,
+        width: 150,
         alignItems: 'center',
         backgroundColor: '#00cccc'
     }

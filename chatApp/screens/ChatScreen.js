@@ -6,8 +6,9 @@ export default function ChatScreen(props) {
     const [textMessage, setTextMessage] = React.useState("");
     const [messages, setMessages] = React.useState([]);
 
-    const userName = props.navigation.state.params.name;
-    const fromUser = props.navigation.state.params.userName;
+    const toUser = props.navigation.state.params.toUser;
+    const userName = props.navigation.state.params.receiverPhoneNumber;
+    const fromUser = props.navigation.state.params.senderPhoneNumber;
     async function handleSend() {
         await firebase.database().ref("messages/").push({
             text: textMessage,
@@ -82,7 +83,7 @@ export default function ChatScreen(props) {
 
         return(
             <SafeAreaView>
-                <Text style={styles.username}>{userName}</Text>
+                <Text style={styles.username}>{toUser}</Text>
                 <FlatList 
                 style={{padding: 10, height: height * 0.85}}
                 data={messages}

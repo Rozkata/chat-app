@@ -1,25 +1,28 @@
 import * as React from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Alert } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Alert, KeyboardAvoidingView, Dimensions } from "react-native";
 import firebase from "firebase";
 
 export default function LoginScreen (props) {
     const [name, setName] = React.useState("");
+    const [telephoneNumber, setTelephoneNumber] = React.useState("");
 
     // move to Chat screen and pass in the name of the user
     // also set user name in firebase db
     async function handleContinue() {
         if (name.length < 3) {
             Alert.alert('Error', 'Wrong name');
+        } else if (telephoneNumber.length < 10) {
+            Alert.alert('Error', 'Invalid phone number entered');
         } else {
-            var rootRef = firebase.database().ref('users/' + name);
+            var rootRef = firebase.database().ref('users/' + telephoneNumber);
             rootRef.once("value")
             .then(function(snapshot) {
             var key = snapshot.exists();
             if (!key) {
-                firebase.database().ref('users/' + name).set({name: name});
+                firebase.database().ref('users/' + telephoneNumber).set({name: name});
             }
             });
-            props.navigation.navigate("Home", {name: name});
+            props.navigation.navigate("Home", {name: name, userPhoneNumber: telephoneNumber});
         }
     }
 
@@ -38,6 +41,7 @@ export default function LoginScreen (props) {
             firebase.initializeApp(firebaseConfig);
         }
     });
+    const keyboardVerticalOffset = Platform.OS === 'ios' ? 30 : 0
 
     return (
         <View style={styles.container}>
@@ -45,6 +49,7 @@ export default function LoginScreen (props) {
             <View style={{marginTop: 64}}>
                 <Image source={require("../assets/mentormate.png")} />
             </View>
+            <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={keyboardVerticalOffset}>
             <View style={{marginHorizontal: 32}}>
                 <Text style={styles.username}>Username</Text>
                 <TextInput style={styles.input} 
@@ -52,12 +57,19 @@ export default function LoginScreen (props) {
                 onChangeText={name => setName(name)}
                 value={name}
                 />
-                <View style={{alignItems: "flex-end", marginTop: 64}}>
+                <Text style={styles.username}>Phone number</Text>
+                <TextInput style={styles.input}
+                placeholder="Enter telephone number"
+                onChangeText={number => setTelephoneNumber(number)}
+                value={telephoneNumber} 
+                />
+            </View>
+            </KeyboardAvoidingView>
+            <View style={{alignItems: "flex-end", marginTop: 50, marginHorizontal: 32}}>
                     <TouchableOpacity  onPress={handleContinue}>
                         <Text style={styles.continueButton}>Continue</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
         </View>
     );
 
@@ -79,7 +91,7 @@ const styles = StyleSheet.create({
     },
     username: {
         fontWeight: "bold",
-        fontSize: 30,
+        fontSize: 20,
         color: "#514E5A",
         marginTop: 5,
     },
