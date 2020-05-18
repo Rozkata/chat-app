@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, FlatList, Dimensions, Platform, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, FlatList, Dimensions, Platform, KeyboardAvoidingView, Image } from "react-native";
 import firebase from "firebase";
 
 export default function ChatScreen(props) {
@@ -10,6 +10,7 @@ export default function ChatScreen(props) {
     const userName = props.navigation.state.params.receiverPhoneNumber;
     const fromUser = props.navigation.state.params.senderPhoneNumber;
     async function handleSend() {
+        if (textMessage !== "") {
         await firebase.database().ref("messages/").push({
             text: textMessage,
             fromUser: fromUser,
@@ -19,6 +20,7 @@ export default function ChatScreen(props) {
         setTextMessage("");
 
         return () => firebase.database().ref("messages/").off();
+        }
     }
 
     React.useEffect(() => {
@@ -58,7 +60,6 @@ export default function ChatScreen(props) {
                 <Text style={styles.timeStyle}>
                     {convertTime(item.timeStamp)}
                 </Text>
-
             </View>
         );
     }
@@ -91,7 +92,6 @@ export default function ChatScreen(props) {
                 />
                 <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={keyboardVerticalOffset}>
                 <View style={styles.sendMessageContainer}>
-
                     <TextInput 
                     style={styles.input}
                     placeholder="Type message..."
@@ -99,7 +99,7 @@ export default function ChatScreen(props) {
                     value={textMessage}
                     />
                     <TouchableOpacity onPress={() => handleSend()} style={styles.sendButton}>
-                        <Text style={styles.btnText}>Send</Text>
+                    <Image style={{height: 60, width: 60}} source={require("../assets/send.png")} />
                     </TouchableOpacity>
                 </View>
                 </KeyboardAvoidingView>
@@ -124,14 +124,10 @@ const styles = StyleSheet.create({
         padding: 10,
         borderWidth: 1,
         borderColor: '#ccc',
-        width: '90%',
+        width: '87%',
         marginBottom: 10,
         borderRadius: 5,
         backgroundColor: "white"
-    },
-    btnText: {
-        color: 'darkblue',
-        fontSize: 15
     },
     send: {
         position: "absolute",
@@ -157,7 +153,6 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     sendButton: {
-        paddingBottom:10, 
-        marginLeft:5
+        paddingBottom:10,
     }
 });
