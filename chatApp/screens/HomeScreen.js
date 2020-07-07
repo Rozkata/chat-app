@@ -13,10 +13,22 @@ export default function HomeScreen(props) {
     
     const currentTelephoneNumber = props.navigation.state.params.userPhoneNumber;
 
+    let friends = [];
+
     React.useEffect(() => {
         const dbRef = firebase.database().ref('users');
         dbRef.on('child_added', (val) => {
             const person = val.val();
+            dbRef.orderByChild('name').equalTo(person.name).on("value", function(snapshot) {
+                snapshot.forEach((function(child) {
+                    person['fatherKey'] = child.key;
+                 })); 
+              });
+            
+            firebase.database().ref('users/' + currentTelephoneNumber + '/' +'friend/')
+            .on('child_added', (value) => {
+                friends.push(value.val().friend);
+            });
             if (person.image && person.name === props.navigation.state.params.name) {
                 User.imageUrl = person.image;
                 hasImage = true;
@@ -24,12 +36,15 @@ export default function HomeScreen(props) {
             if (!hasImage) {
                 User.imageUrl = null;
             }
-            setUsers((prevState) =>  {
+
+            if (friends.includes(person.fatherKey)) {
+                setUsers((prevState) =>  {
+                        return [...prevState, person];
+                });
+                setFullData((prevState) => {
                     return [...prevState, person];
-            });
-            setFullData((prevState) => {
-                return [...prevState, person];
-            });
+                });
+            }
         })
     }, []);
     
@@ -58,6 +73,10 @@ export default function HomeScreen(props) {
 
     function handleGoToProfile() {
         props.navigation.navigate("Profile", {userName: props.navigation.state.params.name, phoneNumber: currentTelephoneNumber});
+    }
+    
+    function handleAddFriend() {
+        props.navigation.navigate("AddFriend", {currentPhoneNumber: currentTelephoneNumber});
     }
     
     function contains(name, query) {
@@ -90,6 +109,9 @@ export default function HomeScreen(props) {
             <SafeAreaView style={{flex: 1}}>
                 {profileUsers}
             </SafeAreaView>
+            <TouchableOpacity onPress={() => handleAddFriend()}>
+            <Image  style={styles.addFriend} source={require("../assets/addFriend.jpg")} />
+            </TouchableOpacity>
             </View>
         );
 }
@@ -98,7 +120,7 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'column', 
         height: '100%', 
-        backgroundColor: "#ccffff"
+        backgroundColor: "#ccffff",
     },
     users: {
         padding: 10, 
@@ -129,5 +151,11 @@ const styles = StyleSheet.create({
         fontSize: 20, 
         fontWeight: 'bold', 
         color: "#00ace6"
+    },
+    addFriend: {
+        width: 50, 
+        height: 50, 
+        alignSelf: 'flex-end', 
+        borderRadius: 32
     }
 });

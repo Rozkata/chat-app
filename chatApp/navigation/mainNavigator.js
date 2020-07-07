@@ -5,13 +5,15 @@ import LoginScreen from '../screens/LoginScreen';
 import ChatScreen from '../screens/ChatScreen';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import AddFriendScreen from '../screens/AddFriendScreen';
 
 const AppNavigator = createStackNavigator(
   {
     Login: LoginScreen,
     Home: HomeScreen,
     Chat: ChatScreen,
-    Profile: ProfileScreen
+    Profile: ProfileScreen,
+    AddFriend: AddFriendScreen
   },
   {
     headerMode: "none"
